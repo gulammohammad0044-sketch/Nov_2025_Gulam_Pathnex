@@ -1,0 +1,4 @@
+Revised kubernetes
+Reading + Speaking 
+Prepared interview question
+And Revised the git
