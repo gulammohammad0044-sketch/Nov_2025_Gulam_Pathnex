@@ -1,5 +1,4 @@
 
-# Day 04-09-Dec: Infrastructure & CI/CD Notes
 
 ## Ansible — Install Multiple Packages
 Install multiple packages using yum package manager:
