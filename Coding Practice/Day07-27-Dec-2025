@@ -1,0 +1,97 @@
+## Day 07 — SPEED TYPING
+
+# Ansible: Install nginx
+
+---
+- name: Install nginx
+  hosts: all
+  become: yes
+
+  tasks:
+    - name: install nginx
+      yum:
+        name: nginx
+        state: present
+
+
+# Terraform: EC2 (choose any Pathnex instance)
+
+resource "aws_instance" "PathnexEC2" {
+  ami = "ami-nbdcb7894924db"
+  instance_type = "t2.micro"
+
+  tags = {
+    name = "pathnex"
+  }
+}
+
+
+# Kubernetes: Deployment 2 replicas
+
+apiVersion: v1
+kind: Replica
+metadata:
+  name: pathnex-deployment
+spec:
+  replica: 2
+  selector:
+    matchLabels:
+      app: pathnex-app
+  template:
+    metadata: 
+      labels:
+        app: pathnex-app
+    spec:
+      containers:
+        - name: app
+          image: nginx
+          ports:
+            - containers: 80
+
+
+#  Shell: Print date + uptime
+
+#!/bin/bash
+echo "Date: $(date)"
+echo "uptime: $(uptime)"
+
+
+# Parameterized Builds--> Jenkins Pipeline 
+
+pipeline {
+    agent any
+    parameters {
+        string(name: 'ENVIRONMENT', defaultValue: 'dev', description: 'Deployment Environment')
+    }
+    environment {
+        INSTITUTE_NAME = "pathnex"
+    }
+    stages {
+        stage('checkout') {
+            steps {
+                git url: 'https://github.com/Pathnex/sample-java-app.git'
+            }
+        }
+        stage('Deploy') {
+            steps {
+                sh 'echo "Deploying to $ENVIRONMENT BY $INSTITUTE_NAME"'
+            }
+        }
+    }
+}
+
+
+## GitLab CI —> Parameterized via Variables
+
+stages:
+  - deploy
+
+variables:
+  INSTITUTE_NAME: "pathnex"
+  ENVIRONMENT: "dev"
+
+ deploy:
+   stage: deploy
+   image: alpine:latest
+   script:
+     - echo "Deploying to $ENVIRONMENT by $INSTITUTE_NAME" 
